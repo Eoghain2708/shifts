@@ -1,5 +1,5 @@
 require "dotenv"
-Dotenv.load
+Dotenv.load(File.expand_path("../.env", __dir__))
 
 require_relative "calculator"
 require_relative "client"

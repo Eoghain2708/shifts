@@ -5,7 +5,6 @@ require "fileutils"
 require "dotenv"
 
 class Client
-  Dotenv.load
   LOGIN_URL = ENV["LOGIN_URL"]
   
   CACHE_DIR = File.join(Dir.home, ".cache", "shifts")
@@ -13,9 +12,8 @@ class Client
 
   def get_employees(date)
     login_token = login_and_get_token()
-    roster_url = "#{ENV["ROSTER_URL"]}date=#{date}"
-    roster_uri = URI("#{roster_url}")
-    
+    roster_uri = URI(ENV["ROSTER_URL"])
+    roster_uri.query = URI.encode_www_form(date: date.to_s)
     roster_request = Net::HTTP::Get.new(roster_uri)
     roster_request["synergy-login-token"] = login_token
     roster_response = Net::HTTP.start(roster_uri.hostname, roster_uri.port, use_ssl: true) do |http|

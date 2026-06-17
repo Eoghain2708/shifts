@@ -3,7 +3,7 @@ require_relative "shifts"
 class CLI
   # available commands
   # shifts hours me thisweek/nextweek
-  # shifts hours nameho thisweek/nextweek
+  # shifts hours name thisweek/nextweek
   # shifts willsee name name thisweek/nextweek
   def self.run(argv)
     command = argv.shift ## ARGV now contains remaining data 
