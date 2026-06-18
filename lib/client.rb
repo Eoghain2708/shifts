@@ -10,8 +10,10 @@ class Client
   CACHE_DIR = File.join(Dir.home, ".cache", "shifts")
   CACHE_FILE = File.join(CACHE_DIR, "token.json")
 
+  # @params  date
+  # returns json of employees for the week of __date__
   def get_employees(date)
-    login_token = login_and_get_token()
+    login_token = login_and_get_token
     roster_uri = URI(ENV["ROSTER_URL"])
     roster_uri.query = URI.encode_www_form(date: date.to_s)
     roster_request = Net::HTTP::Get.new(roster_uri)
