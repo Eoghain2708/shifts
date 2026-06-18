@@ -1,15 +1,21 @@
 require_relative "shifts"
-
+require "date"
 class CLI
+  ALLOWED_COMMANDS = ["hours", "willsee", "whosin"]
   # available commands
   # shifts hours me thisweek/nextweek
   # shifts hours name thisweek/nextweek
   # shifts willsee name name thisweek/nextweek
   def self.run(argv)
     command = argv.shift ## ARGV now contains remaining data 
-    abort "Expected thisweek or nextweek for final argument" unless ["thisweek", "nextweek"].include?(argv.last.downcase)
+    abort "Invalid command" unless ALLOWED_COMMANDS.include?(command.downcase)
     period = argv.pop.downcase
-    date = define_period(period)
+
+    begin
+      date = define_period(period)
+    rescue Date::Error
+      abort "Expected thisweek, nextweek, today, tomorrow or a valid date YYYY-mm-dd for final argument"
+    end
 
     client = Client.new
     employees = client.get_employees(date)
@@ -19,6 +25,8 @@ class CLI
       hours(employees, argv)
     when "willsee"
       willsee(employees, argv)
+    when "whosin"
+      whosin(employees, date)
     else 
       abort "Unknown command: #{command}"
     end
@@ -28,16 +36,19 @@ class CLI
   end
 
   def self.define_period(period)
-    date =
+    period = period.strip.downcase
     case period
     when "thisweek"
       Dates.this_week
     when "nextweek"
       Dates.next_week
-    else 
-      Dates.this_week
+    when "today"
+      Dates.today
+    when "tomorrow"
+      Dates.tomorrow
+    else
+      Dates.parse_arg(period)
     end
-    date
   end
 
   def self.hours(employees, argv)
@@ -48,7 +59,7 @@ class CLI
       shifts = Roster.shifts_for(employees, argv[0].downcase)
     end
     shift_data = Calculator.calc_shift_data(shifts, start_key: "startTime", end_key: "endTime")
-    ShiftFormatter.format_shifts(shift_data)
+    ShiftFormatter.format_shift_data(shift_data)
   end
 
   def self.willsee(employees, argv)
@@ -58,5 +69,12 @@ class CLI
     p1_data = Calculator.calc_shift_data(Roster.shifts_for(employees, p1), start_key: "startTime", end_key: "endTime")
     p2_data = Calculator.calc_shift_data(Roster.shifts_for(employees, p2), start_key: "startTime", end_key: "endTime")
     Roster.find_shifts_in_common(employees, p1_data, p2_data)
+  end
+
+  def self.whosin(employees, date)
+    shifts = Roster.shifts_by_date(employees, date)
+    shifts.each do |shift|
+      ShiftFormatter.format_shift(shift)
+    end
   end
 end

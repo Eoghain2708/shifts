@@ -14,4 +14,16 @@ module Dates
   def self.next_week
     this_week + 7
   end
+
+  def self.today
+    Date.today
+  end
+
+  def self.tomorrow
+    Date.today + 1
+  end
+
+  def self.parse_arg(date_string)
+    Date.parse(date_string)
+  end
 end
