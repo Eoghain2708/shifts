@@ -5,11 +5,14 @@ module ShiftFormatter
   def self.format_shift_data(shift_data)
     puts "-" * 40
     puts "Shifts for #{shift_data[:name]}"
+    puts "Role: #{shift_data[:role]}"
+    puts "Hourly wage: £#{shift_data[:hourly_wage]}" 
     shift_data[:shifts].each do |shift, info|
       info.each do |i|
         pretty_print_shift_data(shift, i)
       end
     end
+    puts "-" * 15
     puts "Total hours: #{shift_data[:total_hours]}"
     puts "Total pay before tax: £#{shift_data[:pay_before_tax]}"
     puts "-" * 40

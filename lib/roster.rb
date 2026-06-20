@@ -7,7 +7,12 @@ module Roster
   def self.shifts_for(employees, employee_name)
     employee = find_employee(employees, employee_name)
     shifts = employee&.dig("shifts")
-    shifts
+
+    return {
+      shifts: shifts,
+      age: employee.dig("age"),
+      job_code: employee.dig("defaultJob")
+    }
   end
 
 
