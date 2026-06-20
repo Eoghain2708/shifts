@@ -22,6 +22,7 @@ module ShiftFormatter
   # Used to print a single shift with these keys rather than full saturated data (which is used in the shifts hours command)
   # This method is used to format shifts returned from the whosin command
   def self.format_shift(shift)
+    return unless shift && shift[:pretty_print]
     puts "-" * 20
     puts "Name: #{shift[:name]}" 
     if shift[:pretty_print].size > 1

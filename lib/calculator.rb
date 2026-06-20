@@ -47,4 +47,36 @@ module Calculator
     total_shift_data[:pay_before_tax] = total_pay.round(2)
     total_shift_data
   end
+  private
+  private
+  def self.base_hourly_wage(age)
+    # we don't hire < 18
+    return HOURLY_WAGE_UNDER_21 if age < 21
+    return HOURLY_WAGE_21_OVER
+  end
+
+  def self.calc_extra_pay_for_managers(job_code)
+    return 0 if job_code == ENV["GENERAL_STAFF"]
+    return MANAGEMENT_BONUS
+  end
+
+  def self.role(job_code)
+    return "Not found" unless job_code
+    role = case job_code
+    when ENV["GENERAL_MANAGER"]
+      "General Manager"
+    when ENV["DUTY_MANAGER"]
+      "Duty Manager"
+    when ENV["SUPERVISOR"]
+      "Supervisor"
+    else
+      "General Staff"
+    end
+    role
+  end
+
+  def self.calc_hourly_wage(employee_data)
+    return BigDecimal("10.85")unless employee_data[:age] && employee_data[:job_code]
+    base_hourly_wage(employee_data[:age]) + calc_extra_pay_for_managers(employee_data[:job_code])
+  end
 end

@@ -77,7 +77,6 @@ module Roster
           (hash[:end_time]   ||= []) << d.dig("endTime", "orderableTime")
           (hash[:pretty_print] ||= []) << d.dig("shiftText", "time12Hr")
         end
-        pp hash
         result << hash
       end
     end
