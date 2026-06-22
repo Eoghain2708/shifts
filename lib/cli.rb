@@ -80,7 +80,6 @@ class CLI
 
   def self.whosin(employees, date)
     shifts = Roster.shifts_by_date(employees, date)
-    pp shifts
     shifts.each do |shift|
       ShiftFormatter.format_shift(shift)
     end
