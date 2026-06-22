@@ -7,11 +7,19 @@ module Cache
   def self.dir 
     DIR
   end
+
+
   def self.read(name)
     path = path(name)
     return nil unless File.exist?(path)
     return nil if File.zero?(path)
 
+    File.read(path)
+  end
+
+  def self.read_from_path(path)
+    return nil unless File.exist?(path)
+    return nil if File.zero?(path)
     File.read(path)
   end
 

@@ -40,9 +40,7 @@ module Roster
         emp2_day.each do |shift2|
           if overlap?(shift1, shift2)
             found = true
-            overlap_start = [shift1[:start], shift2[:start]].max
-            overlap_end = [shift1[:finish], shift2[:finish]].min
-            overlap = overlap_end - overlap_start
+            overlap = calc_overlap(shift1, shift2)
             puts "Shift in common found! Date: #{Date.parse(date).strftime("%A %d %B %Y")}"
             puts "-" * 30
             puts "#{emp_one_name}'s shift: #{shift1[:pretty_shift]}"
@@ -54,8 +52,12 @@ module Roster
       end
       puts "#{emp_one_name} and #{emp_two_name} will not see each other this week :(" unless found
     end
-      
-     
+  end
+
+  def self.calc_overlap(shift1, shift2)
+    overlap_start = [shift1[:start], shift2[:start]].max
+    overlap_end = [shift1[:finish], shift2[:finish]].min
+    overlap_end - overlap_start
   end
 
   # @param employees - JSON collection of employees
@@ -100,7 +102,7 @@ module Roster
   end
 
   private
-  def self.overlap?(shift_one, shift_two)
-    return shift_one[:start] < shift_two[:finish] && shift_two[:start] < shift_one[:finish]
+  def self.overlap?(shift1, shift2)
+    shift1[:start] < shift2[:finish] && shift1[:finish] > shift2[:start]
   end
 end

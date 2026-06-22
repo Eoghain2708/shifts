@@ -31,15 +31,19 @@ module Analytics
     result[:shifts_per_employee] = sorted
     result[:total_wage] = result[:total_wage].to_f.round(2)
     result[:total_hours] = result[:total_hours].round(2)
-    Cache.write("#{name}.json", result)
+    Cache.write("lifetime/#{name}.json", JSON.pretty_generate(result))
     puts "Saved!"
     result
   end
 
   def self.retrieve_lifetime_data(employee_name)
     dir = Cache.dir
-    matcher = FuzzeMatch.new(Dir["#{dir}/*"])
-    json = Cache.read(matcher.match("#{employee_name}.json"))
+    p dir 
+    p employee_name
+    matcher = FuzzyMatch.new(Dir["#{dir}/lifetime/*"])
+    match = matcher.find("#{employee_name}.json")
+    p match
+    json = Cache.read_from_path(match)
     return "No lifetime data saved for this employee" unless json
     data = JSON.parse(json)
     data
@@ -81,7 +85,7 @@ module Analytics
             job_code: d.dig("job", "id"),
             age: age,
             people: people,
-            pay: ((Calculator.calc_hourly_wage({age: age, job_code: job_code})) * d.dig("netDuration", "decimal")).to_f.round(2)
+            pay: ((Calculator.calc_hourly_wage({age: age, job_code: d.dig("job", "id")})) * d.dig("netDuration", "decimal")).to_f.round(2)
         }
         end
       end
@@ -90,25 +94,4 @@ module Analytics
     end
     result
   end
-
-  # while date > start_date
-  #     employee_data = client.get_employees(date)
-  #     employees = employee_data
-  #     employees.each do |emp|
-  #       shifts = emp["shifts"]
-  #       shifts.each do |shift, data|
-  #         pp Date.parse(shift)
-  #         daily_rota = Roster.shifts_by_date(employee_data, Date.parse(shift))
-  #         next unless daily_rota.any? { |h| h[:name] == name }
-  #         daily_rota.each do |person|
-  #           next if person[:name] == name
-  #           result[:shifts_per_employee][person[:name]] += 1
-  #         end
-  #       end
-  #     end
-  #     shift_data = Calculator.calc_shift_data(Roster.shifts_for(employee_data, name), start_key: "startTime", end_key: "endTime")
-  #     result[:total_wages] ? result[:total_wages] += shift_data[:pay_before_tax] : result[:total_wages] = shift_data[:pay_before_tax]
-  #     date -= 7
-  #   end
-  #   pp result
 end

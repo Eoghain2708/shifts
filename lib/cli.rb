@@ -1,7 +1,7 @@
 require_relative "shifts"
 require "date"
 class CLI
-  ALLOWED_COMMANDS = ["hours", "willsee", "whosin", "lifetime"]
+  ALLOWED_COMMANDS = ["hours", "willsee", "whosin", "lifetime", "glifetime"]
   # available commands
   # shifts hours me thisweek/nextweek
   # shifts hours name thisweek/nextweek
@@ -27,8 +27,10 @@ class CLI
       willsee(employees, argv)
     when "whosin"
       whosin(employees, date)
+    when "glifetime"
+      glifetime(employees, argv.last, date, client)
     when "lifetime"
-      lifetime(employees, argv.last, date, client)
+      lifetime(argv.last)
     else 
       abort "Unknown command: #{command}"
     end
@@ -84,9 +86,13 @@ class CLI
     end
   end
 
-  def self.lifetime(employees, name, date, client)
-    employee = Roster.find_employee(employees, name)
+  def self.glifetime(employees, name, date, client)
     data = Analytics.calc_lifetime_data(employees, name, date, client)
+    pp data
+  end
+
+  def self.lifetime(employee_name)
+    data = Analytics.retrieve_lifetime_data(employee_name)
     pp data
   end
 end
