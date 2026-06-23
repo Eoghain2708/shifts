@@ -1,30 +1,27 @@
 require_relative "shifts"
 require "date"
 class CLI
-  ALLOWED_COMMANDS = ["hours", "willsee", "whosin", "lifetime", "glifetime", "help"]
-  
   # available commands
   # shifts hours me thisweek/nextweek
   # shifts hours name thisweek/nextweek
   # shifts willsee name name thisweek/nextweek
   def self.run(argv)
     command = argv.shift ## ARGV now contains remaining data 
-    abort "Invalid command" unless ALLOWED_COMMANDS.include?(command.downcase)
     
    
     
-    case command
-    when "hours"
+    case command.downcase
+    when "hours", "hrs"
       hours(argv)
-    when "willsee"
+    when "willsee", "wsee"
       willsee(argv)
-    when "whosin"
+    when "whosin", "who"
       whosin(argv)
-    when "glifetime"
+    when "glifetime", "glife"
       glifetime(argv)
-    when "lifetime"
+    when "lifetime", "life"
       lifetime(argv)
-    when "help"
+    when "help", "h"
       help
     else 
       abort "Unknown command: #{command}"
