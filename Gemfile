@@ -11,3 +11,7 @@ gem "bigdecimal"
 gem "tty-table", "~> 0.12.0"
 
 gem "pastel", "~> 0.8.0"
+
+group :test do
+  gem "minitest"
+end

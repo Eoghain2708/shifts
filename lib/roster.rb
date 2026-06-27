@@ -109,6 +109,7 @@ module Roster
   end
 
   def self.generate_roster_table(roster_data, start_date)
+    make_friday!(start_date)
     week = (0..6).map { |i| start_date + i }
     table = TTY::Table.new(header: ["Name", "Fri", "Sat", "Sun", "Mon", "Tue", "Wed", "Thu"])
     roster_data.each do |name, days|
@@ -140,5 +141,15 @@ module Roster
     result.flatten!
     grouped = result.group_by { |h| h[:name]}
     grouped
+  end
+
+  private
+  def self.make_friday!(start_date)
+    friday = if start_date.friday?
+      start_date
+    else
+      start_date - ((start_date.wday - 5) % 7)
+    end
+    friday
   end
 end

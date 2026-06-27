@@ -9,10 +9,10 @@ module Calculator
   MANAGEMENT_BONUS = BigDecimal("0.40")
 
   JOB_CODES = {
-    "1489343527823711206" => "General Manager",
-    "1489343542827589598" => "Duty Manager",
-    "1489339758941806044" => "Supervisor",
-    "1537027076506875352" => "General Staff"
+    "General Manager" => "1489343527823711206",
+    "Duty Manager" => "1489343542827589598",
+    "Supervisor" => "1489339758941806044",
+    "General Staff" => "1537027076506875352"
   }
 
   # @param {Hash<Hash>} - nested HashMap of shifts gotten with the shifts_for method
@@ -54,6 +54,7 @@ module Calculator
     total_shift_data[:total_hours] = total_hours
     total_shift_data[:pay_before_tax] = total_pay.round(2)
     total_shift_data[:pay_before_tax] = total_pay.round(2)
+    pp total_shift_data
     total_shift_data
   end
 
@@ -64,21 +65,21 @@ module Calculator
   end
 
   def self.calc_extra_pay_for_managers(job_code)
-    return 0 if job_code == ENV["GENERAL_STAFF"]
+    return 0 if job_code == JOB_CODES["General Staff"]
     return MANAGEMENT_BONUS
   end
 
   def self.role(job_code)
     return "Not found" unless job_code
     JOB_CODES.each do |k, v|
-      return v if k == job_code
+      return k if v == job_code
     end
     return "General Staff"
   end
 
   
   def self.calc_hourly_wage(employee_data)
-    return BigDecimal("10.85")unless employee_data[:age] && employee_data[:job_code]
+    return HOURLY_WAGE_UNDER_21 unless employee_data[:age] && employee_data[:job_code]
     base_hourly_wage(employee_data[:age]) + calc_extra_pay_for_managers(employee_data[:job_code])
   end
 end
