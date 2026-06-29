@@ -45,9 +45,10 @@ module ShiftFormatter
   end
 
   def self.format_shifts_in_common(result)
+    return unless result
     not_found = result.first[:message]
     if not_found
-      puts not_found
+      puts PASTEL.bright_red not_found
       return
     end
     result.each do |hash|

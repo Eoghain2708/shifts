@@ -29,12 +29,16 @@ module Roster
     emp_two_name = employee_two_shifts[:name]
     found = false
     result = []
-    if !employee_one_shifts[:shifts] || !employee_two_shifts[:shifts]
-      puts "These workers will not see each other this week"
-      return
+    unless employee_one_shifts[:shifts] && employee_two_shifts[:shifts]
+      return [ message: "The rota is not complete yet." ]
     end
-    if employee_two_shifts[:shifts].empty? && employee_one_shifts[:shifts].empty?
-        return "This rota appears not to be done yet. Check back later."
+
+    unless employee_one_shifts[:shifts]
+      return [ message: "#{emp_one_name} has no shifts scheduled yet"]
+    end
+
+    unless employee_two_shifts[:shifts]
+      return [ message: "#{emp_two_name} has no shifts scheduled yet"]
     end
     employee_one_shifts[:shifts].each do |date, emp1_day|
       emp2_day = employee_two_shifts[:shifts][date]
